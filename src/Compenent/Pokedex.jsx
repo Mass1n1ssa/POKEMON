@@ -5,6 +5,7 @@ export default function Pokedex() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchedPokemon, setSearchedPokemon] = useState(null);
   const [pokemonData, setPokemonData] = useState([]);
+  
 
   useEffect(() => {
     // Fetch data from the PokeAPI

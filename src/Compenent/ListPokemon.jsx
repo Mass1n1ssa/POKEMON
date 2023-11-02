@@ -42,6 +42,7 @@ export default function ListPokemon() {
               }.png`}
               alt={pokemon.name}
             />
+            <button>Add</button>
           </div>
         ))}
       </div>
@@ -54,3 +55,4 @@ export default function ListPokemon() {
     </div>
   );
 }
+

@@ -10,9 +10,9 @@
 }
 .Pokemon{
   width: 20px;
-  height: 100px;
+  height: 80px;
   position: absolute;
-  left:5%;
+  left:4%;
   top: 0%;
 }
 header{
@@ -24,6 +24,13 @@ header{
   background-color:crimson;
   border-radius: 0px 0px 30px 30px;
 
+}
+li{
+display: flex;
+justify-content: right;
+width: 100px;
+
+  
 }
 li{
 
@@ -40,6 +47,28 @@ li{
   transition: 0.5s;
 
 }
+ li {
+  padding: 10px;
+  margin: 0 10px;
+  border-radius: 10px;
+  background-color:aliceblue; /* Couleur de fond */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+ li:hover {
+  background-color:aliceblue; /* Couleur de fond au survol */
+  transform: scale(1.05); /* Légère augmentation de la taille au survol */
+}
+
+ li.active {
+  background-color: #ff5722; /* Couleur de fond pour l'élément actif */
+}
+
 
 
 

@@ -18,11 +18,11 @@ export default function ListPokemon() {
     const limit = 60 - offset > 20 ? 20 : 60 - offset;
     fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
       .then((response) => response.json())
-      .then((data) => setPokemonData(data.results))
+      .then((data) => setPokemonData(data.results.map((pokemon, index) => ({ ...pokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${offset + index + 1}.png`, index: offset + index }))))
       .catch((error) => console.error('Error fetching Pokemon data:', error));
   };
 
-  const fetchPokemonDetails = (pokemonName) => {
+  const fetchPokemonDetails = (pokemonName, index) => {
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
       .then((response) => response.json())
       .then((data) => {
@@ -33,6 +33,7 @@ export default function ListPokemon() {
           base_experience: data.base_experience,
           types: data.types.map((type) => type.type.name),
           image: data.sprites.front_default,
+          index: index,
         });
       })
       .catch((error) => console.error('Error fetching Pokemon details:', error));
@@ -50,20 +51,19 @@ export default function ListPokemon() {
     const selectedPokemon = filteredPokemon[index];
 
     // Ajouter le Pokémon au pokedex.
-    setPokedex((prevPokedex) => [...prevPokedex, selectedPokemon]);
+    setPokedex((prevPokedex) => [...prevPokedex, { ...selectedPokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`, id: selectedPokemon.index + 1 }]);
 
     // Sauvegarder le pokedex dans le stockage local.
-    localStorage.setItem('pokedex', JSON.stringify([...pokedex, selectedPokemon]));
+    localStorage.setItem('pokedex', JSON.stringify([...pokedex, { ...selectedPokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`, id: selectedPokemon.index + 1 }]));
 
-    // Supprimer le Pokémon de la liste principale si vous le souhaitez.
+    // Supprimer le Pokémon de la liste principale si tu le souhaite.
     const updatedPokemonData = [...pokemonData];
     updatedPokemonData.splice(index, 1);
     setPokemonData(updatedPokemonData);
   };
 
-  const handleShowInfo = (pokemon) => {
-    fetchPokemonDetails(pokemon.name);
-    
+  const handleShowInfo = (pokemon, index) => {
+    fetchPokemonDetails(pokemon.name, index);
   };
 
   const handleHideInfo = () => {
@@ -100,11 +100,8 @@ export default function ListPokemon() {
         {filteredPokemon.map((pokemon, index) => (
           <div key={index} className="card">
             <p>{pokemon.name}</p>
-            <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${(currentPage - 1) * 20 + index + 1}.png`}
-              alt={pokemon.name}
-            />
-            <button onClick={() => handleShowInfo(pokemon)}>Info</button>
+            <img src={pokemon.image} alt={pokemon.name} />
+            <button onClick={() => handleShowInfo(pokemon, index)}>Info</button>
             <button onClick={() => handleAdd(index)}>ADD</button>
           </div>
         ))}
@@ -120,7 +117,7 @@ export default function ListPokemon() {
       {selectedPokemon && (
         <div className="pokemon-info">
           <h2>{selectedPokemon.name}</h2>
-          <img src={selectedPokemon.image} alt={selectedPokemon.name} /> {/* Affichage de l'image */}
+          <img src={selectedPokemon.image} alt={selectedPokemon.name} />
           <p>Height: {selectedPokemon.height} decimetres</p>
           <p>Weight: {selectedPokemon.weight} hectograms</p>
           <p>Base experience: {selectedPokemon.base_experience}</p>
@@ -131,4 +128,3 @@ export default function ListPokemon() {
     </div>
   );
 }
-

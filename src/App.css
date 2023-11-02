@@ -1,5 +1,44 @@
-.App {
+
+.App{
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100px;
+  box-sizing: border-box;
+  padding: 10px;
+  margin: 0 auto;
+}
+.Pokemon{
+  width: 20px;
+  height: 100px;
+  position: absolute;
+  left:5%;
+  top: 0%;
+}
+header{
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100px;
+  background-color:crimson;
+  border-radius: 0px 0px 30px 30px;
+
+}
+li{
+
+  list-style: none;
+  display: inline-block;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: crimson;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.5s;
+
 }
 
 

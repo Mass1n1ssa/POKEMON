@@ -1,76 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import './styles/Pokedex.css';
+import './Pokedex.css';
 
 export default function Pokedex() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchedPokemon, setSearchedPokemon] = useState(null);
-  const [pokemonData, setPokemonData] = useState([]);
+  // Charger le pokedex depuis le stockage local lors du montage initial.
+  const [pokedex, setPokedex] = useState([]);
 
+  // Utilisez useEffect pour charger le pokedex lors du montage initial.
   useEffect(() => {
-    // Fetch data from the PokeAPI
-    fetch('https://pokeapi.co/api/v2/pokemon/?limit=20')
-      .then((response) => response.json())
-      .then((data) => {
-        // Fetch details for each Pokemon to get the id
-        const promises = data.results.map((pokemon) =>
-          fetch(pokemon.url)
-            .then((response) => response.json())
-            .then((pokemonDetails) => ({
-              ...pokemonDetails,
-              image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonDetails.id}.png`,
-            }))
-        );
+    const storedPokedex = localStorage.getItem('pokedex');
+    if (storedPokedex) {
+      setPokedex(JSON.parse(storedPokedex));
+    }
+  }, []); // Le tableau vide [] signifie que cela s'exécute une seule fois au montage.
 
-        Promise.all(promises)
-          .then((pokemonDetailsArray) => setPokemonData(pokemonDetailsArray))
-          .catch((error) => console.error('Error fetching Pokemon details:', error));
-      })
-      .catch((error) => console.error('Error fetching Pokemon data:', error));
-  }, []); // Empty dependency array to ensure the effect runs once on component mount
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    setSearchedPokemon(
-      pokemonData.find(
-        (pokemon) => pokemon.name.toLowerCase() === e.target.value.toLowerCase()
-      )
-    );
+  // Fonction pour supprimer un Pokémon du pokedex
+  const removeFromPokedex = (index) => {
+    const updatedPokedex = [...pokedex];
+    updatedPokedex.splice(index, 1);
+    setPokedex(updatedPokedex);
+    // Mettez à jour le stockage local avec le pokedex mis à jour.
+    localStorage.setItem('pokedex', JSON.stringify(updatedPokedex));
   };
-
-  const handleRemoveCard = (id) => {
-    const updatedPokemonData = pokemonData.filter((pokemon) => pokemon.id !== id);
-    setPokemonData(updatedPokemonData);
-  };
-
-  const filteredPokemon = pokemonData.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
-    <div className="Pokedex">
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search Pokemon..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      </div>
-      <div className="cards">
-        {filteredPokemon.map((pokemon) => (
-          <div key={pokemon.name} className="card">
+    <div>
+      <h1>Pokedex</h1>
+      <div className="pokedex">
+        {pokedex.map((pokemon, index) => (
+          <div key={index} className="pokedex-card">
             <p>{pokemon.name}</p>
-            <img src={pokemon.image} alt={pokemon.name} />
-            <button onClick={() => handleRemoveCard(pokemon.id)}>Remove</button>
+            <img
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+              alt={pokemon.name}
+            />
+            <button onClick={() => removeFromPokedex(index)}>Remove</button>
           </div>
         ))}
       </div>
-      {searchedPokemon && (
-        <div className="searched-pokemon">
-          <h2>{searchedPokemon.name}</h2>
-          {/* Add additional details here */}
-        </div>
-      )}
     </div>
   );
 }

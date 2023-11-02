@@ -27,6 +27,7 @@ export default function ListPokemon() {
       .then((response) => response.json())
       .then((data) => {
         setSelectedPokemon({
+          Number: data.id,
           name: data.name,
           height: data.height,
           weight: data.weight,
@@ -63,7 +64,6 @@ export default function ListPokemon() {
 
   const handleShowInfo = (pokemon) => {
     fetchPokemonDetails(pokemon.name);
-    
   };
 
   const handleHideInfo = () => {
@@ -99,9 +99,12 @@ export default function ListPokemon() {
       <div className="cards">
         {filteredPokemon.map((pokemon, index) => (
           <div key={index} className="card">
+            <p>#{(currentPage - 1) * 20 + index + 1}</p>
             <p>{pokemon.name}</p>
             <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${(currentPage - 1) * 20 + index + 1}.png`}
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                (currentPage - 1) * 20 + index + 1
+              }.png`}
               alt={pokemon.name}
             />
             <button onClick={() => handleShowInfo(pokemon)}>Info</button>
@@ -109,7 +112,7 @@ export default function ListPokemon() {
           </div>
         ))}
       </div>
-      <div className="pagination">
+      <div className="Changement de page">
         <button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </button>
@@ -119,6 +122,8 @@ export default function ListPokemon() {
       </div>
       {selectedPokemon && (
         <div className="pokemon-info">
+          <h1>Pokemon Info</h1>
+          <p>#{selectedPokemon.Number}</p>
           <h2>{selectedPokemon.name}</h2>
           <img src={selectedPokemon.image} alt={selectedPokemon.name} /> {/* Affichage de l'image */}
           <p>Height: {selectedPokemon.height} decimetres</p>

@@ -71,7 +71,7 @@
 }
 
 .pagination {
-  margin-top: 30px;
+  margin-top: 0px;
 }
 
 button {
@@ -96,3 +96,9 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.pokemon-info p {
+  font-size: 16px; 
+  margin: 5px 0;
+}
+

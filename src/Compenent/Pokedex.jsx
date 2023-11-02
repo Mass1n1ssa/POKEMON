@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import './Pokedex.css';
 
 export default function Pokedex() {
-  // Charger le pokedex depuis le stockage local lors du montage initial.
+  
   const [pokedex, setPokedex] = useState([]);
 
-  // Utilisez useEffect pour charger le pokedex lors du montage initial.
+  
   useEffect(() => {
     const storedPokedex = localStorage.getItem('pokedex');
     if (storedPokedex) {
       setPokedex(JSON.parse(storedPokedex));
     }
-  }, []); // Le tableau vide [] signifie que cela s'exécute une seule fois au montage.
+  }, []);
 
   // Fonction pour supprimer un Pokémon du pokedex
   const removeFromPokedex = (index) => {

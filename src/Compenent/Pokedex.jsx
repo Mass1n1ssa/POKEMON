@@ -47,6 +47,30 @@ export default function Pokedex() {
   );
 
   return (
-    <div>Pokedex</div>
-  )
+    <div className="Pokedex">
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search Pokemon..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+      <div className="cards">
+        {filteredPokemon.map((pokemon) => (
+          <div key={pokemon.name} className="card">
+            <p>{pokemon.name}</p>
+            <img src={pokemon.image} alt={pokemon.name} />
+            <button onClick={() => handleRemoveCard(pokemon.id)}>Remove</button>
+          </div>
+        ))}
+      </div>
+      {searchedPokemon && (
+        <div className="searched-pokemon">
+          <h2>{searchedPokemon.name}</h2>
+          {/* Add additional details here */}
+        </div>
+      )}
+    </div>
+  );
 }

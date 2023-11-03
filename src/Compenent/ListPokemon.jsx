@@ -6,21 +6,31 @@ export default function ListPokemon() {
   const [pokemonData, setPokemonData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-
-  // Charger le pokedex depuis le stockage local lors du montage initial.
   const [pokedex, setPokedex] = useState(() => {
     const storedPokedex = localStorage.getItem('pokedex');
     return storedPokedex ? JSON.parse(storedPokedex) : [];
   });
 
-  const fetchPokemonData = (page) => {
-    const offset = (page - 1) * 20;
-    const limit = 60 - offset > 20 ? 20 : 60 - offset;
-    fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`)
-      .then((response) => response.json())
-      .then((data) => setPokemonData(data.results.map((pokemon, index) => ({ ...pokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${offset + index + 1}.png`, index: offset + index }))))
-      .catch((error) => console.error('Error fetching Pokemon data:', error));
-  };
+  useEffect(() => {
+    // Fetch Pokémon data and filter out those that are in the Pokédex.
+    const fetchPokemonData = async (page) => {
+      const offset = (page - 1) * 20;
+      const limit = 60 - offset > 20 ? 20 : 60 - offset;
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
+      const data = await response.json();
+      const filteredData = data.results
+        .map((pokemon, index) => ({
+          ...pokemon,
+          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${offset + index + 1}.png`,
+          index: offset + index,
+        }))
+        .filter(pokemon => !pokedex.find(p => p.index === pokemon.index));
+
+      setPokemonData(filteredData);
+    };
+
+    fetchPokemonData(currentPage);
+  }, [currentPage, pokedex]);
 
   const fetchPokemonDetails = (pokemonName, index) => {
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
@@ -40,10 +50,6 @@ export default function ListPokemon() {
       .catch((error) => console.error('Error fetching Pokemon details:', error));
   };
 
-  useEffect(() => {
-    fetchPokemonData(currentPage);
-  }, [currentPage]);
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -51,21 +57,44 @@ export default function ListPokemon() {
   const handleAdd = (index) => {
     const selectedPokemon = filteredPokemon[index];
 
-    // Ajouter le Pokémon au pokedex.
-    setPokedex((prevPokedex) => [...prevPokedex, { ...selectedPokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`, id: selectedPokemon.index + 1 }]);
+    // Vérifiez si le Pokémon n'est pas déjà dans le Pokédex.
+    if (!pokedex.find(pokemon => pokemon.index === selectedPokemon.index)) {
+      // Ajoutez le Pokémon au Pokédex.
+      setPokedex((prevPokedex) => [
+        ...prevPokedex,
+        {
+          ...selectedPokemon,
+          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+            selectedPokemon.index + 1
+          }.png`,
+          id: selectedPokemon.index + 1,
+        },
+      ]);
 
-    // Sauvegarder le pokedex dans le stockage local.
-    localStorage.setItem('pokedex', JSON.stringify([...pokedex, { ...selectedPokemon, image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`, id: selectedPokemon.index + 1 }]));
+      // Sauvegardez le Pokédex mis à jour dans le stockage local.
+      localStorage.setItem(
+        'pokedex',
+        JSON.stringify([
+          ...pokedex,
+          {
+            ...selectedPokemon,
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+              selectedPokemon.index + 1
+            }.png`,
+            id: selectedPokemon.index + 1,
+          },
+        ])
+      );
 
-    // Supprimer le Pokémon de la liste principale si tu le souhaite.
-    const updatedPokemonData = [...pokemonData];
-    updatedPokemonData.splice(index, 1);
-    setPokemonData(updatedPokemonData);
+      // Supprimez le Pokémon de la liste principale.
+      const updatedPokemonData = [...pokemonData];
+      updatedPokemonData.splice(index, 1);
+      setPokemonData(updatedPokemonData);
+    }
   };
 
   const handleShowInfo = (pokemon) => {
-    fetchPokemonDetails(pokemon.name);
-    
+    fetchPokemonDetails(pokemon.name, pokemon.index);
   };
 
   const handleHideInfo = () => {
@@ -87,7 +116,6 @@ export default function ListPokemon() {
       setCurrentPage(currentPage - 1);
     }
   };
-
   return (
     <div className="ListPokemon">
       <div className="search-bar">
@@ -101,10 +129,12 @@ export default function ListPokemon() {
       <div className="cards">
         {filteredPokemon.map((pokemon, index) => (
           <div key={index} className="card">
-            <p>#{(currentPage - 1) * 20 + index + 1}</p>
+            <p>#{pokemon.index + 1}</p>
             <p>{pokemon.name}</p>
             <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${(currentPage - 1) * 20 + index + 1}.png`}
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                pokemon.index + 1
+              }.png`}
               alt={pokemon.name}
             />
             <button onClick={() => handleShowInfo(pokemon)}>Info</button>
@@ -123,7 +153,7 @@ export default function ListPokemon() {
       {selectedPokemon && (
         <div className="pokemon-info">
           <h1>Pokemon Info</h1>
-          <p>#{selectedPokemon.Number}</p>
+          <p>{selectedPokemon.Number}</p>
           <h2>{selectedPokemon.name}</h2>
           <img src={selectedPokemon.image} alt={selectedPokemon.name} />
           <p>Height: {selectedPokemon.height} decimetres</p>

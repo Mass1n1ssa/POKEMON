@@ -4,7 +4,7 @@ import './ListPokemon.css';
 export default function ListPokemon() {
   const [searchTerm, setSearchTerm] = useState('');
   const [pokemonData, setPokemonData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1); // Initialize current page to 1
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [inOverlay, setInfoOverlayOpen] = useState(false);
   const [pokedex, setPokedex] = useState(() => {
@@ -14,8 +14,8 @@ export default function ListPokemon() {
 
   useEffect(() => {
     const fetchPokemonData = async () => {
-      const offset = (currentPage - 1) * 20;
-      const limit = 20;
+      const offset = (currentPage - 1) * 25; // Adjust offset based on the current page
+      const limit = 25; // Limit the number of Pokémon to 20
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
       const data = await response.json();
       const filteredData = data.results
@@ -108,7 +108,7 @@ export default function ListPokemon() {
   );
 
   const handleNextPage = () => {
-    if (currentPage < 60) { // Suppose qu'il y a 60 pages au total (pour 1200 Pokémon)
+    if (currentPage < 50) { // Limit to 50 pages
       setCurrentPage(currentPage + 1);
     }
   };
@@ -132,7 +132,7 @@ export default function ListPokemon() {
       <div className="cards">
         {filteredPokemon.map((pokemon, index) => (
           <div key={index} className="card">
-            <p>#{pokemon.index + 1}</p>
+            <p>{pokemon.index + 1}</p>
             <p>{pokemon.name}</p>
             <img
               src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.index + 1}.png`}
@@ -147,20 +147,19 @@ export default function ListPokemon() {
         <button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </button>
-        <button onClick={handleNextPage} disabled={currentPage === 60}>
+        <button onClick={handleNextPage} disabled={currentPage === 50}>
           Next
         </button>
       </div>
       <div className={`overlay ${inOverlay ? 'overlay-open' : ''}`}>
         {selectedPokemon && (
           <div className="pokemon-info">
-            <h1>Pokemon Info</h1>
             <p>{selectedPokemon.Number}</p>
             <h2>{selectedPokemon.name}</h2>
             <img src={selectedPokemon.image} alt={selectedPokemon.name} />
-            <p>Height: {selectedPokemon.height} decimetres</p>
-            <p>Weight: {selectedPokemon.weight} hectograms</p>
-            <p>Base experience: {selectedPokemon.base_experience}</p>
+            <p>HP : {selectedPokemon.height}</p>
+            <p>Puissance : {selectedPokemon.weight} </p>
+            <p> Experience : {selectedPokemon.base_experience}</p>
             <p>Types: {selectedPokemon.types.join(', ')}</p>
             <button onClick={handleHideInfo}>Close</button>
           </div>
@@ -169,5 +168,3 @@ export default function ListPokemon() {
     </div>
   );
 }
-
-

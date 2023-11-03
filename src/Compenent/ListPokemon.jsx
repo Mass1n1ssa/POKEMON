@@ -14,8 +14,8 @@ export default function ListPokemon() {
 
   useEffect(() => {
     const fetchPokemonData = async () => {
-      const offset = (currentPage - 1) * 25; // Adjust offset based on the current page
-      const limit = 25; // Limit the number of Pokémon to 20
+      const offset = (currentPage - 1) * 28; // Adjust offset based on the current page
+      const limit = 28; // Limit the number of Pokémon to 20
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
       const data = await response.json();
       const filteredData = data.results

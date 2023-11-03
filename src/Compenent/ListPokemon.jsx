@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import './ListPokemon.css';
 
@@ -6,13 +7,13 @@ export default function ListPokemon() {
   const [pokemonData, setPokemonData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [inOverlay, setInfoOverlayOpen] = useState(false);
   const [pokedex, setPokedex] = useState(() => {
     const storedPokedex = localStorage.getItem('pokedex');
     return storedPokedex ? JSON.parse(storedPokedex) : [];
   });
 
   useEffect(() => {
-    // Fetch Pokémon data and filter out those that are in the Pokédex.
     const fetchPokemonData = async (page) => {
       const offset = (page - 1) * 20;
       const limit = 60 - offset > 20 ? 20 : 60 - offset;
@@ -46,6 +47,7 @@ export default function ListPokemon() {
           image: data.sprites.front_default,
           index: index,
         });
+        openInfoOverlay(); // Ouvre l'overlay lorsque les informations sont prêtes.
       })
       .catch((error) => console.error('Error fetching Pokemon details:', error));
   };
@@ -98,6 +100,15 @@ export default function ListPokemon() {
   };
 
   const handleHideInfo = () => {
+    closeInfoOverlay(); // Ferme l'overlay lorsque l'utilisateur clique sur "Close".
+  };
+
+  const openInfoOverlay = () => {
+    setInfoOverlayOpen(true);
+  };
+
+  const closeInfoOverlay = () => {
+    setInfoOverlayOpen(false);
     setSelectedPokemon(null);
   };
 
@@ -116,6 +127,7 @@ export default function ListPokemon() {
       setCurrentPage(currentPage - 1);
     }
   };
+
   return (
     <div className="ListPokemon">
       <div className="search-bar">
@@ -150,19 +162,22 @@ export default function ListPokemon() {
           Next
         </button>
       </div>
-      {selectedPokemon && (
-        <div className="pokemon-info">
-          <h1>Pokemon Info</h1>
-          <p>{selectedPokemon.Number}</p>
-          <h2>{selectedPokemon.name}</h2>
-          <img src={selectedPokemon.image} alt={selectedPokemon.name} />
-          <p>Height: {selectedPokemon.height} decimetres</p>
-          <p>Weight: {selectedPokemon.weight} hectograms</p>
-          <p>Base experience: {selectedPokemon.base_experience}</p>
-          <p>Types: {selectedPokemon.types.join(', ')}</p>
-          <button onClick={handleHideInfo}>Close</button>
-        </div>
-      )}
+      <div className={`overlay ${inOverlay ? 'overlay-open' : ''}`}>
+        {selectedPokemon && (
+          <div className="pokemon-info">
+            <h1>Pokemon Info</h1>
+            <p>{selectedPokemon.Number}</p>
+            <h2>{selectedPokemon.name}</h2>
+            <img src={selectedPokemon.image} alt={selectedPokemon.name} />
+            <p>Height: {selectedPokemon.height} decimetres</p>
+            <p>Weight: {selectedPokemon.weight} hectograms</p>
+            <p>Base experience: {selectedPokemon.base_experience}</p>
+            <p>Types: {selectedPokemon.types.join(', ')}</p>
+            <button onClick={handleHideInfo}>Close</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+

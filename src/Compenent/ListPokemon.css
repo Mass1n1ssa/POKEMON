@@ -97,8 +97,44 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.pokemon-info p {
-  font-size: 16px; 
-  margin: 5px 0;
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
+.overlay-open {
+  display: flex;
+}
+
+.pokemon-info {
+  background-color: #fff;
+  padding: 50px;;
+  border-radius: 15px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.pokemon-info h2 {
+  margin: 0;
+  font-size: 2em;
+  color: #333;
+}
+.pokemon-info img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

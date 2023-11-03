@@ -1,4 +1,3 @@
-
 import ListPokemon from './Compenent/ListPokemon';
 import Pokedex from './Compenent/Pokedex';
 import { Link, Routes, Route } from 'react-router-dom';

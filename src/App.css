@@ -61,12 +61,12 @@ li{
 }
 
  li:hover {
-  background-color:aliceblue; /* Couleur de fond au survol */
-  transform: scale(1.05); /* Légère augmentation de la taille au survol */
+  background-color:aliceblue; 
+  transform: scale(1.05); 
 }
 
  li.active {
-  background-color: #ff5722; /* Couleur de fond pour l'élément actif */
+  background-color: #ff5722; 
 }
 
 

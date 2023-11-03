@@ -19,6 +19,12 @@ export default function Pokedex() {
     localStorage.setItem('pokedex', JSON.stringify(updatedPokedex));
   };
 
+  const removeAllFromPokedex = () => {
+    // Supprimer tous les Pokémon du Pokédex
+    setPokedex([]);
+    localStorage.removeItem('pokedex'); // Supprimer le Pokédex du stockage local
+  };
+
   // Filtrer les Pokémon en fonction de la valeur de recherche
   const filteredPokedex = pokedex.filter((pokemon) =>
     pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -26,15 +32,23 @@ export default function Pokedex() {
 
   return (
     <div>
-      <h1>Pokedex</h1>
+      
+      
+      <h1>Votre Pokedex :</h1>
       <div className="nav-bar">
         <input
           type="text"
           placeholder="Chercher un Pokémon..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          
         />
+        
       </div>
+      <button onClick={removeAllFromPokedex} className="remove-all-button">
+        Remove All
+      </button>
+      
       <div className="pokedex">
         {filteredPokedex.map((pokemon, index) => (
           <div key={index} className="pokedex-card">

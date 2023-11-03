@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import './ListPokemon.css';
 
@@ -14,9 +13,9 @@ export default function ListPokemon() {
   });
 
   useEffect(() => {
-    const fetchPokemonData = async (page) => {
-      const offset = (page - 1) * 20;
-      const limit = 60 - offset > 20 ? 20 : 60 - offset;
+    const fetchPokemonData = async () => {
+      const offset = (currentPage - 1) * 20;
+      const limit = 20;
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
       const data = await response.json();
       const filteredData = data.results
@@ -26,11 +25,11 @@ export default function ListPokemon() {
           index: offset + index,
         }))
         .filter(pokemon => !pokedex.find(p => p.index === pokemon.index));
-
+  
       setPokemonData(filteredData);
     };
-
-    fetchPokemonData(currentPage);
+  
+    fetchPokemonData();
   }, [currentPage, pokedex]);
 
   const fetchPokemonDetails = (pokemonName, index) => {
@@ -47,7 +46,7 @@ export default function ListPokemon() {
           image: data.sprites.front_default,
           index: index,
         });
-        openInfoOverlay(); // Ouvre l'overlay lorsque les informations sont prêtes.
+        openInfoOverlay();
       })
       .catch((error) => console.error('Error fetching Pokemon details:', error));
   };
@@ -57,38 +56,30 @@ export default function ListPokemon() {
   };
 
   const handleAdd = (index) => {
-    const selectedPokemon = filteredPokemon[index];
+    const selectedPokemon = pokemonData[index];
 
-    // Vérifiez si le Pokémon n'est pas déjà dans le Pokédex.
     if (!pokedex.find(pokemon => pokemon.index === selectedPokemon.index)) {
-      // Ajoutez le Pokémon au Pokédex.
       setPokedex((prevPokedex) => [
         ...prevPokedex,
         {
           ...selectedPokemon,
-          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-            selectedPokemon.index + 1
-          }.png`,
+          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`,
           id: selectedPokemon.index + 1,
         },
       ]);
 
-      // Sauvegardez le Pokédex mis à jour dans le stockage local.
       localStorage.setItem(
         'pokedex',
         JSON.stringify([
           ...pokedex,
           {
             ...selectedPokemon,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-              selectedPokemon.index + 1
-            }.png`,
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selectedPokemon.index + 1}.png`,
             id: selectedPokemon.index + 1,
           },
         ])
       );
 
-      // Supprimez le Pokémon de la liste principale.
       const updatedPokemonData = [...pokemonData];
       updatedPokemonData.splice(index, 1);
       setPokemonData(updatedPokemonData);
@@ -100,7 +91,7 @@ export default function ListPokemon() {
   };
 
   const handleHideInfo = () => {
-    closeInfoOverlay(); // Ferme l'overlay lorsque l'utilisateur clique sur "Close".
+    closeInfoOverlay();
   };
 
   const openInfoOverlay = () => {
@@ -117,7 +108,7 @@ export default function ListPokemon() {
   );
 
   const handleNextPage = () => {
-    if (currentPage < 3) {
+    if (currentPage < 60) { // Suppose qu'il y a 60 pages au total (pour 1200 Pokémon)
       setCurrentPage(currentPage + 1);
     }
   };
@@ -144,9 +135,7 @@ export default function ListPokemon() {
             <p>#{pokemon.index + 1}</p>
             <p>{pokemon.name}</p>
             <img
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-                pokemon.index + 1
-              }.png`}
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.index + 1}.png`}
               alt={pokemon.name}
             />
             <button onClick={() => handleShowInfo(pokemon)}>Info</button>
@@ -158,7 +147,7 @@ export default function ListPokemon() {
         <button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </button>
-        <button onClick={handleNextPage} disabled={currentPage === 3}>
+        <button onClick={handleNextPage} disabled={currentPage === 60}>
           Next
         </button>
       </div>
@@ -180,4 +169,5 @@ export default function ListPokemon() {
     </div>
   );
 }
+
 

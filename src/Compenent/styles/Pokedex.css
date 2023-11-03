@@ -1,3 +1,9 @@
+.main{
+  align-content: center;
+  display: flex;
+  flex-direction:column ;
+  flex-wrap: wrap;
+}
 .Pokedex {
   display: flex;
   flex-direction: column;
@@ -8,8 +14,9 @@
 .search-bar {
   width: 100%;
   max-width: 400px;
-  margin-bottom: 20px;
+  margin: 20px auto; /* Ajout de la marge supérieure et de la marge automatique pour centrer */
 }
+
 
 .search-bar input {
   width: 100%;
